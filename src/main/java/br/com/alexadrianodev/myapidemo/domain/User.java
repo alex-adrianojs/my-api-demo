@@ -1,4 +1,4 @@
-package br.com.alexadrianodev.my_api_demo.domain;
+package br.com.alexadrianodev.myapidemo.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
