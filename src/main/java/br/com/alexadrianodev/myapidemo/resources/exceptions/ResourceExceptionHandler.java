@@ -1,5 +1,6 @@
 package br.com.alexadrianodev.myapidemo.resources.exceptions;
 
+import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedExcpetion;
 import br.com.alexadrianodev.myapidemo.services.exceptions.ObjectNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,14 @@ public class ResourceExceptionHandler {
     public ResponseEntity<StandardError>objectNotFound(ObjectNotFoundException ex, HttpServletRequest request){
         StandardError error =
                 new StandardError(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getRequestURI());
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+
+    }
+
+    @ExceptionHandler(DataIntegratyViolatedExcpetion.class)
+    public ResponseEntity<StandardError>dataIntegratyViolated(DataIntegratyViolatedExcpetion ex, HttpServletRequest request){
+        StandardError error =
+                new StandardError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage(), request.getRequestURI());
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 
     }

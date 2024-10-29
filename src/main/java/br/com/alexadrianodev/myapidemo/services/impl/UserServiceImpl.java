@@ -5,6 +5,7 @@ import br.com.alexadrianodev.myapidemo.domain.User;
 import br.com.alexadrianodev.myapidemo.domain.dto.UserDTO;
 import br.com.alexadrianodev.myapidemo.repositories.UserRepository;
 import br.com.alexadrianodev.myapidemo.services.UserService;
+import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedExcpetion;
 import br.com.alexadrianodev.myapidemo.services.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO user) {
+        findByEmail(user);
         return repository.save(mapper.map(user, User.class));
+    }
+
+    private void findByEmail(UserDTO obj){
+        Optional<User> user = repository.findByEmail(obj.getEmail());
+        if(user.isPresent()){
+            throw new DataIntegratyViolatedExcpetion("This email is already registered");
+
+        }
+
     }
 }
