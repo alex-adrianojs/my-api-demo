@@ -1,4 +1,4 @@
-package br.com.alexadrianodev.my_api_demo;
+package br.com.alexadrianodev.myapidemo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class MyApiDemoApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void main() {
+		MyApiDemoApplication.main(new String[] {});
 	}
 
 }
