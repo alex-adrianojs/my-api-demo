@@ -114,6 +114,20 @@ class UserServiceImplTest {
     }
 
     @Test
+    void whenUpdateThenReturnAnDataIntegrityViolationException() {
+        when(repository.findByEmail(anyString())).thenThrow(new DataIntegratyViolatedExcpetion("This email is already registered"));
+
+        try {
+            service.create(userDTO);
+        }catch (Exception ex){
+            assertEquals(DataIntegratyViolatedExcpetion.class, ex.getClass());
+            assertEquals("This email is already registered", ex.getMessage());
+
+        }
+
+    }
+
+    @Test
     void whenUpdateThenReturnSucess() {
         when(repository.save(any())).thenReturn(userEntity);
         User response = service.update(userDTO);
