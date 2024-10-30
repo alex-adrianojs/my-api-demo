@@ -3,6 +3,7 @@ package br.com.alexadrianodev.myapidemo.services.impl;
 import br.com.alexadrianodev.myapidemo.domain.User;
 import br.com.alexadrianodev.myapidemo.domain.dto.UserDTO;
 import br.com.alexadrianodev.myapidemo.repositories.UserRepository;
+import br.com.alexadrianodev.myapidemo.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,10 +12,12 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +38,7 @@ class UserServiceImplTest {
     private ModelMapper mapper;
 
     private User userEntity;
-    private UserDTO user;
+    private UserDTO userDTO;
     private Optional<User> optionalUser;
 
     @BeforeEach
@@ -45,7 +48,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void whenfindByIdTheReturnAnUserInstance() {
+    void whenFindByIdTheReturnAnUserInstance() {
         when(repository.findById(anyInt())).thenReturn(optionalUser);
         User response = service.findById(ID);
         assertNotNull(response);
@@ -55,17 +58,43 @@ class UserServiceImplTest {
         assertEquals(EMAIL, response.getEmail());
 
     }
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException("User not found"));
+        try {
+            service.findById(ID);
+        }catch (Exception ex){
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals("User not found", ex.getMessage());
+        }
+
+    }
 
     @Test
     void findByEmail() {
     }
 
     @Test
-    void findAll() {
+    void whenFindAllThenReturnAnListOfUsers() {
+        when(repository.findAll()).thenReturn(List.of(userEntity));
+        List<User> response = repository.findAll();
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals(User.class, response.get(0).getClass());
+        assertEquals(ID, response.get(0).getId());
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnSucess() {
+        when(repository.save(any())).thenReturn(userEntity);
+        User response = service.create(userDTO);
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
+
     }
 
     @Test
@@ -78,7 +107,7 @@ class UserServiceImplTest {
 
     private void startUser(){
         userEntity = new User(ID, NAME, EMAIL, PASSWORD);
-        user = new UserDTO(ID, NAME, EMAIL, PASSWORD);
+        userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
         optionalUser = Optional.of(new User(ID, NAME, EMAIL, PASSWORD));
     }
 }
