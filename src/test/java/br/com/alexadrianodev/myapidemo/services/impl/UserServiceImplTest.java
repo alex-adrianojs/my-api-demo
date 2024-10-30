@@ -3,6 +3,7 @@ package br.com.alexadrianodev.myapidemo.services.impl;
 import br.com.alexadrianodev.myapidemo.domain.User;
 import br.com.alexadrianodev.myapidemo.domain.dto.UserDTO;
 import br.com.alexadrianodev.myapidemo.repositories.UserRepository;
+import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedExcpetion;
 import br.com.alexadrianodev.myapidemo.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -94,6 +94,22 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
+
+    }
+
+    @Test
+    void whenCreateThenReturnAnDataIntegrityViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        User response = service.create(userDTO);
+        try {
+            optionalUser.get().setId(2);//Setting a new id for a new user with the same email
+            service.create(userDTO);
+        }catch (Exception ex){
+            assertEquals(DataIntegratyViolatedExcpetion.class, ex.getClass());
+            assertEquals("This email is already registered", ex.getMessage());
+
+        }
 
     }
 
