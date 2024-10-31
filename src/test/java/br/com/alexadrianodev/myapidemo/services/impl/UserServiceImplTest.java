@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -71,13 +71,9 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByEmail() {
-    }
-
-    @Test
     void whenFindAllThenReturnAnListOfUsers() {
         when(repository.findAll()).thenReturn(List.of(userEntity));
-        List<User> response = repository.findAll();
+        List<User> response = service.findAll();
         assertNotNull(response);
         assertEquals(1, response.size());
         assertEquals(User.class, response.get(0).getClass());
@@ -141,12 +137,29 @@ class UserServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void deleteWithSucess() {
+        when(repository.findById(anyInt())).thenReturn(optionalUser);
+        doNothing().when(repository).deleteById(anyInt());
+        service.delete(ID);
+        verify(repository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void deleteWithObjectNotFoundException(){
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException("User not found"));
+        try{
+            service.delete(ID);
+        }catch (Exception ex){
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals("User not found", ex.getMessage());
+        }
+
     }
 
     private void startUser(){
         userEntity = new User(ID, NAME, EMAIL, PASSWORD);
         userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
         optionalUser = Optional.of(new User(ID, NAME, EMAIL, PASSWORD));
-    }
+
+        }
 }
