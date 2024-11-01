@@ -1,4 +1,4 @@
-package br.com.alexadrianodev.my_api_demo;
+package br.com.alexadrianodev.myapidemo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
