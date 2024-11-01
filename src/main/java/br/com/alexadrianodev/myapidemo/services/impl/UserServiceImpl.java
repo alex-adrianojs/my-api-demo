@@ -5,7 +5,7 @@ import br.com.alexadrianodev.myapidemo.domain.User;
 import br.com.alexadrianodev.myapidemo.domain.dto.UserDTO;
 import br.com.alexadrianodev.myapidemo.repositories.UserRepository;
 import br.com.alexadrianodev.myapidemo.services.UserService;
-import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedExcpetion;
+import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedException;
 import br.com.alexadrianodev.myapidemo.services.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public void findByEmail(UserDTO user){
         Optional<User> userEntity = repository.findByEmail(user.getEmail());
         if(userEntity.isPresent() && !userEntity.get().getId().equals(user.getId())){
-            throw new DataIntegratyViolatedExcpetion("This email is already registered");
+            throw new DataIntegratyViolatedException("This email is already registered");
         }
     }
 

@@ -3,7 +3,7 @@ package br.com.alexadrianodev.myapidemo.services.impl;
 import br.com.alexadrianodev.myapidemo.domain.User;
 import br.com.alexadrianodev.myapidemo.domain.dto.UserDTO;
 import br.com.alexadrianodev.myapidemo.repositories.UserRepository;
-import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedExcpetion;
+import br.com.alexadrianodev.myapidemo.services.exceptions.DataIntegratyViolatedException;
 import br.com.alexadrianodev.myapidemo.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,7 +102,7 @@ class UserServiceImplTest {
             optionalUser.get().setId(2);//Setting a new id for a new user with the same email
             service.create(userDTO);
         }catch (Exception ex){
-            assertEquals(DataIntegratyViolatedExcpetion.class, ex.getClass());
+            assertEquals(DataIntegratyViolatedException.class, ex.getClass());
             assertEquals("This email is already registered", ex.getMessage());
 
         }
@@ -111,12 +111,12 @@ class UserServiceImplTest {
 
     @Test
     void whenUpdateThenReturnAnDataIntegrityViolationException() {
-        when(repository.findByEmail(anyString())).thenThrow(new DataIntegratyViolatedExcpetion("This email is already registered"));
+        when(repository.findByEmail(anyString())).thenThrow(new DataIntegratyViolatedException("This email is already registered"));
 
         try {
             service.create(userDTO);
         }catch (Exception ex){
-            assertEquals(DataIntegratyViolatedExcpetion.class, ex.getClass());
+            assertEquals(DataIntegratyViolatedException.class, ex.getClass());
             assertEquals("This email is already registered", ex.getMessage());
 
         }
